@@ -29,42 +29,34 @@ import com.example.android.hilt.LogApplication
 import com.example.android.hilt.R
 import com.example.android.hilt.data.Log
 import com.example.android.hilt.data.LoggerLocalDataSource
+import com.example.android.hilt.databinding.FragmentLogsBinding
 import com.example.android.hilt.util.DateFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 /**
  * Fragment that displays the database logs.
  */
+@AndroidEntryPoint
 class LogsFragment : Fragment() {
 
-    private lateinit var logger: LoggerLocalDataSource
-    private lateinit var dateFormatter: DateFormatter
+    @Inject lateinit var logger: LoggerLocalDataSource
+    @Inject lateinit var dateFormatter: DateFormatter
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var binding: FragmentLogsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_logs, container, false)
+        binding = FragmentLogsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view).apply {
-            setHasFixedSize(true)
-        }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        populateFields(context)
-    }
-
-    private fun populateFields(context: Context) {
-        logger = (context.applicationContext as LogApplication).serviceLocator.loggerLocalDataSource
-        dateFormatter =
-            (context.applicationContext as LogApplication).serviceLocator.provideDateFormatter()
+        binding.recyclerView.apply { setHasFixedSize(true) }
     }
 
     override fun onResume() {
